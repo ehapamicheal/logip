@@ -1,26 +1,55 @@
+// CURRENT DATE
+function formatCurrentDate() {
+  const now = new Date();
+  const day = now.getDate().toString().padStart(2, '0'); // e.g., 09
+  const month = now.toLocaleString('default', { month: 'long' }); // e.g., July
+  const year = now.getFullYear(); // e.g., 2025
+  return `${day} ${month}, ${year}`;
+}
+
+const dateEl = document.getElementById('todaysDate');
+if (dateEl) {
+  dateEl.textContent = formatCurrentDate();
+}
+
+
+
 
 // CHAT AREA FUNCTIONALITY
 const chatInput = document.querySelector('.chat-input');
-chatInput.addEventListener('input', function() {
+chatInput.addEventListener('input', function () {
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 100) + 'px';
 });
 
-// Scroll to bottom when new messages are added
-function scrollToBottom() {
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+// Get formatted current time as "10:53pm" or "8:00am"
+function getCurrentTime() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12 || 12; // convert to 12-hour format
+    return `${hours}:${minutes}${ampm}`;
 }
 
-// Simulate adding a new message (for testing)
-function addMessage(author, text, time = 'now') {
+// Scroll to the top of the chat container
+function scrollToTop() {
+  const chatMessages = document.getElementById('chatMessages');
+  chatMessages.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+// Add a new message to the top of the chat
+function addMessage(author, text, time = getCurrentTime()) {
     const chatMessages = document.getElementById('chatMessages');
     const messageHTML = `
       <div class="message_main_box">
         <div class="message_head">
           <div class="box">
             <div class="mage_box">
-              <img src="assets/media/avatars/150-10.jpg" alt="${author}" class="message-avatar">
+              <img src="./theme/dist/assets/media/avatars/150-1.jpg" alt="${author}" class="message-avatar">
               <svg class="notification_dot" width="14" height="14" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="5" cy="5.24609" r="4.25" fill="#2EAF4A" stroke="white" stroke-width="1.5"/>
               </svg>
@@ -30,35 +59,35 @@ function addMessage(author, text, time = 'now') {
               <p class="">Added a file to <span class="">7Heros Project</span></p>
             </div>
           </div>
-
           <span class="message-time">${time}</span>
         </div>
-
         <div class="message-content">
           <p class="message-text">${text}</p>
         </div>
-        
       </div>
     `;
-    chatMessages.insertAdjacentHTML('beforeend', messageHTML);
-    scrollToBottom();
+    chatMessages.insertAdjacentHTML('afterbegin', messageHTML); // insert at top
+    scrollToTop(); // scroll to top
 }
 
-// Handle enter key to send message
-chatInput.addEventListener('keypress', function(e) {
+// Handle "Enter" key to send message
+chatInput.addEventListener('keypress', function (e) {
     if (e.key === 'Enter' && !e.shiftKey) {
+        const userName = document.getElementById('userName')?.textContent.trim() || 'You';
         e.preventDefault();
         const message = this.value.trim();
         if (message) {
-            addMessage('You', message);
+            addMessage(userName, message); // Auto-includes current time
             this.value = '';
             this.style.height = 'auto';
         }
     }
 });
 
-// Initialize scroll position
-scrollToBottom();
+// Initialize scroll position Give animation time to start before scrolling
+setTimeout(() => {
+    scrollToTop();
+}, 100);
 
 
 

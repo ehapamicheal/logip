@@ -876,7 +876,20 @@ body {
 
 .message_main_box {
   margin-bottom: 1rem;
+  animation: slideDownFadeIn 0.3s ease-out;
 }
+
+@keyframes slideDownFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 .message_main_box .message_head {
   display: flex;
